@@ -1,4 +1,5 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 
 module.exports = (env) => {
     const isProduction = env ? env.production : false
@@ -20,6 +21,26 @@ module.exports = (env) => {
                             }
                         }
                     ]
+                },
+                {
+                    test: /\.css$/,
+                    use: [
+                        { loader: isProduction ? MiniCssExtractPlugin.loader : 'style-loader' },
+                        { loader: 'css-loader', options: { sourceMap: !isProduction } }
+                    ]
+                },
+                {
+                    test: /\.(eot|ttf|woff|woff2)$/i,
+                    use: [{ loader: 'file-loader', options: { outputPath: 'fonts' } }]
+                },
+                {
+                    test: /\.(png|jpg|svg)$/i,
+                    use: [
+                        {
+                            loader: 'url-loader',
+                            options: { limit: 10 * 1024, outputPath: 'assets' }
+                        }
+                    ]
                 }
             ]
         },
@@ -27,7 +48,13 @@ module.exports = (env) => {
             extensions: ['.tsx', '.ts', '.js']
         },
         plugins: [
-            new HtmlWebpackPlugin({ template: './src/index.html', favicon: './src/favicon.ico' })
+            new HtmlWebpackPlugin({
+                template: './src/index.html',
+                favicon: './src/favicon.ico'
+            }),
+            new MiniCssExtractPlugin({
+                filename: isProduction ? 'css/[contenthash].css' : 'css/[name].css'
+            })
         ],
         output: {
             path: `${__dirname}/public`,

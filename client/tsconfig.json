@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         "allowSyntheticDefaultImports": true,
-        "lib": ["DOM", "DOM.Iterable", "ES5"],
+        "lib": ["DOM", "DOM.Iterable", "ESNext"],
         "jsx": "react-jsx",
         "module": "ESNext",
         "moduleResolution": "Node",
