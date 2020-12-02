@@ -44,5 +44,22 @@ namespace reactivities.Api.Controllers
 
             return Ok();
         }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<Unit>> Put(Guid id, Edit.Command command)
+        {
+            command.Id = id;
+            await _mediator.Send(command);
+
+            return Ok();
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<Unit>> Delete(Guid id)
+        {
+            await _mediator.Send(new Delete.Command{ Id = id});
+
+            return Ok();
+        }
     }
 }

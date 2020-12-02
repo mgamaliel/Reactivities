@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -30,13 +28,10 @@ namespace reactivities.Application.Activities
             {
                 var activity = await _context.Activities
                     .FirstOrDefaultAsync(
-                        (a) => a.Id == request.Id,
+                        a => a.Id == request.Id,
                         cancellationToken);
 
-                if (activity == null)
-                {
-                    // TODO: throw exception
-                }
+                if (activity == null) throw new Exception("Could not find activity");
 
                 return activity;
             }
