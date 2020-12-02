@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -25,6 +26,15 @@ namespace reactivities.Api.Controllers
                 .Send(new List.Query());
 
             return Ok(activities);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Activity>> Get(Guid id)
+        {
+            var activity = await _mediator
+                .Send(new Details.Query {Id = id});
+
+            return Ok(activity);
         }
     }
 }
