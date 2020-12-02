@@ -36,5 +36,13 @@ namespace reactivities.Api.Controllers
 
             return Ok(activity);
         }
+
+        [HttpPost]
+        public async Task<ActionResult<Unit>> Post(Create.Command command)
+        {
+            await _mediator.Send(command);
+
+            return Ok();
+        }
     }
 }
