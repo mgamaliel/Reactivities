@@ -5,9 +5,12 @@ import Navbar from './components/Navbar'
 import { Activity } from './types'
 import './App.css'
 import { Button, Container, Grid, Item, Label, Segment } from 'semantic-ui-react'
+import ActivityForm from './components/ActivityForm'
+import ActivityDetails from './components/ActivityDetails'
 
 const App: FC = (): JSX.Element => {
     const [activities, setActivities] = useState<Activity[]>([])
+    const [selectedActivity, setSelectedActivity] = useState<Activity | null>(null)
 
     useEffect(() => {
         axios
@@ -35,7 +38,10 @@ const App: FC = (): JSX.Element => {
                                                 </div>
                                             </Item.Description>
                                             <Item.Extra>
-                                                <Button floated="right" color="blue">
+                                                <Button
+                                                    floated="right"
+                                                    color="blue"
+                                                    onClick={() => setSelectedActivity(activity)}>
                                                     View
                                                 </Button>
                                                 <Label basic>{activity.category}</Label>
@@ -45,6 +51,10 @@ const App: FC = (): JSX.Element => {
                                 ))}
                             </Item.Group>
                         </Segment>
+                    </Grid.Column>
+                    <Grid.Column width={6}>
+                        {selectedActivity && <ActivityDetails selected={selectedActivity} />}
+                        <ActivityForm />
                     </Grid.Column>
                 </Grid>
             </Container>

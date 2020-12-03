@@ -1,5 +1,6 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 module.exports = (env) => {
     const isProduction = env ? env.production : false
@@ -54,6 +55,9 @@ module.exports = (env) => {
             }),
             new MiniCssExtractPlugin({
                 filename: isProduction ? 'css/[contenthash].css' : 'css/[name].css'
+            }),
+            new CopyWebpackPlugin({
+                patterns: [{ from: './assets/category', to: 'assets/category' }]
             })
         ],
         output: {
