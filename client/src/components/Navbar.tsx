@@ -3,7 +3,11 @@ import { Button, Container, Menu } from 'semantic-ui-react'
 import logoUrl from '../../assets/logo.png'
 import './Navbar.css'
 
-const Navbar: FC = (): JSX.Element => {
+type Props = {
+    onCreate?(): void
+}
+
+const Navbar: FC<Props> = (props: Props): JSX.Element => {
     return (
         <Menu fixed="top" inverted>
             <Container>
@@ -12,7 +16,9 @@ const Navbar: FC = (): JSX.Element => {
                 </Menu.Item>
                 <Menu.Item name="Activities" />
                 <Menu.Item>
-                    <Button positive>Create Activity</Button>
+                    <Button positive onClick={props.onCreate}>
+                        Create Activity
+                    </Button>
                 </Menu.Item>
             </Container>
         </Menu>

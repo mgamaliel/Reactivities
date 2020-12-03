@@ -4,6 +4,9 @@ import { Activity } from '../types'
 
 type Props = {
     selected: Activity | null
+
+    onEdit?(): void
+    onCancel?(): void
 }
 
 const ActivityDetails: FC<Props> = (props: Props): JSX.Element => {
@@ -19,10 +22,10 @@ const ActivityDetails: FC<Props> = (props: Props): JSX.Element => {
             </Card.Content>
             <Card.Content extra>
                 <Button.Group widths={2}>
-                    <Button basic color="blue">
+                    <Button basic color="blue" onClick={props.onEdit}>
                         Edit
                     </Button>
-                    <Button basic color="grey">
+                    <Button basic color="grey" onClick={props.onCancel}>
                         Cancel
                     </Button>
                 </Button.Group>

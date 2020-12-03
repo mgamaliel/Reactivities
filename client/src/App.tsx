@@ -1,6 +1,7 @@
 import axios from 'axios'
 import React, { FC, useEffect, useState } from 'react'
 import 'semantic-ui-css/semantic.css'
+import { v4 as uuid } from 'uuid'
 import Navbar from './components/Navbar'
 import { Activity } from './types'
 import './App.css'
@@ -11,6 +12,7 @@ import ActivityDetails from './components/ActivityDetails'
 const App: FC = (): JSX.Element => {
     const [activities, setActivities] = useState<Activity[]>([])
     const [selectedActivity, setSelectedActivity] = useState<Activity | null>(null)
+    const [editMode, setEditMode] = useState<boolean>(false)
 
     useEffect(() => {
         axios
@@ -20,7 +22,12 @@ const App: FC = (): JSX.Element => {
 
     return (
         <>
-            <Navbar />
+            <Navbar
+                onCreate={() => {
+                    setSelectedActivity(null)
+                    setEditMode(true)
+                }}
+            />
             <Container style={{ marginTop: '8em' }}>
                 <Grid>
                     <Grid.Column width={10}>
@@ -41,8 +48,23 @@ const App: FC = (): JSX.Element => {
                                                 <Button
                                                     floated="right"
                                                     color="blue"
-                                                    onClick={() => setSelectedActivity(activity)}>
+                                                    onClick={() => {
+                                                        setSelectedActivity(activity)
+                                                        setEditMode(false)
+                                                    }}>
                                                     View
+                                                </Button>
+                                                <Button
+                                                    floated="right"
+                                                    color="red"
+                                                    onClick={() => {
+                                                        setActivities([
+                                                            ...activities.filter(
+                                                                (a) => a.id !== activity.id
+                                                            )
+                                                        ])
+                                                    }}>
+                                                    Delete
                                                 </Button>
                                                 <Label basic>{activity.category}</Label>
                                             </Item.Extra>
@@ -53,8 +75,33 @@ const App: FC = (): JSX.Element => {
                         </Segment>
                     </Grid.Column>
                     <Grid.Column width={6}>
-                        {selectedActivity && <ActivityDetails selected={selectedActivity} />}
-                        <ActivityForm />
+                        {selectedActivity && !editMode && (
+                            <ActivityDetails
+                                selected={selectedActivity}
+                                onCancel={() => setSelectedActivity(null)}
+                                onEdit={() => setEditMode(true)}
+                            />
+                        )}
+                        {editMode && (
+                            <ActivityForm
+                                key={selectedActivity?.id ?? 0}
+                                selected={selectedActivity}
+                                onCancel={() => setEditMode(false)}
+                                onSubmit={(activity) => {
+                                    if (selectedActivity) {
+                                        setActivities([
+                                            ...activities.filter((a) => a.id !== activity.id),
+                                            activity
+                                        ])
+                                    } else {
+                                        setActivities([...activities, { ...activity, id: uuid() }])
+                                    }
+
+                                    setSelectedActivity(activity)
+                                    setEditMode(false)
+                                }}
+                            />
+                        )}
                     </Grid.Column>
                 </Grid>
             </Container>
