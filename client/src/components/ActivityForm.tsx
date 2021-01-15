@@ -4,6 +4,7 @@ import { Activity } from '../types'
 
 type Props = {
     selected: Activity | null
+    isSubmitting: boolean
 
     onSubmit?(activity: Activity): void
     onCancel?(): void
@@ -79,7 +80,7 @@ const ActivityForm: FC<Props> = (props: Props): JSX.Element => {
                     value={activity?.venue ?? ''}
                     onChange={handleInputChange}
                 />
-                <Button floated="right" positive type="submit">
+                <Button floated="right" loading={props.isSubmitting} positive type="submit">
                     Submit
                 </Button>
                 <Button floated="right" type="button" onClick={props.onCancel}>

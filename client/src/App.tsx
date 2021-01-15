@@ -1,4 +1,3 @@
-import axios from 'axios'
 import React, { FC, useEffect, useState } from 'react'
 import 'semantic-ui-css/semantic.css'
 import { v4 as uuid } from 'uuid'
@@ -16,6 +15,8 @@ const App: FC = (): JSX.Element => {
     const [selectedActivity, setSelectedActivity] = useState<Activity | null>(null)
     const [editMode, setEditMode] = useState<boolean>(false)
     const [isLoading, setIsLoading] = useState<boolean>(true)
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
+    const [target, setTarget] = useState<string>('')
 
     useEffect(() => {
         agent.activities
@@ -63,15 +64,20 @@ const App: FC = (): JSX.Element => {
                                                     View
                                                 </Button>
                                                 <Button
+                                                    name={activity.id}
                                                     floated="right"
                                                     color="red"
+                                                    loading={target === activity.id && isSubmitting}
                                                     onClick={async () => {
+                                                        setIsSubmitting(true)
+                                                        setTarget(activity.id)
                                                         await agent.activities.delete(activity.id)
                                                         setActivities([
                                                             ...activities.filter(
                                                                 (a) => a.id !== activity.id
                                                             )
                                                         ])
+                                                        setIsSubmitting(false)
                                                     }}>
                                                     Delete
                                                 </Button>
@@ -95,8 +101,10 @@ const App: FC = (): JSX.Element => {
                             <ActivityForm
                                 key={selectedActivity?.id ?? 0}
                                 selected={selectedActivity}
+                                isSubmitting={isSubmitting}
                                 onCancel={() => setEditMode(false)}
                                 onSubmit={async (activity) => {
+                                    setIsSubmitting(true)
                                     if (selectedActivity) {
                                         await agent.activities.update(activity)
                                         setActivities([
@@ -110,6 +118,7 @@ const App: FC = (): JSX.Element => {
 
                                     setSelectedActivity(activity)
                                     setEditMode(false)
+                                    setIsSubmitting(false)
                                 }}
                             />
                         )}
