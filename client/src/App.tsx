@@ -9,15 +9,24 @@ import { Button, Container, Grid, Item, Label, Segment } from 'semantic-ui-react
 import ActivityForm from './components/ActivityForm'
 import ActivityDetails from './components/ActivityDetails'
 import agent from './api/agent'
+import Loading from './components/Loading'
 
 const App: FC = (): JSX.Element => {
     const [activities, setActivities] = useState<Activity[]>([])
     const [selectedActivity, setSelectedActivity] = useState<Activity | null>(null)
     const [editMode, setEditMode] = useState<boolean>(false)
+    const [isLoading, setIsLoading] = useState<boolean>(true)
 
     useEffect(() => {
-        agent.activities.list().then((data) => setActivities(data))
+        agent.activities
+            .list()
+            .then((data) => setActivities(data))
+            .then(() => setIsLoading(false))
     }, [])
+
+    if (isLoading) {
+        return <Loading content="Loading activities" />
+    }
 
     return (
         <>
