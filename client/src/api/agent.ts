@@ -1,7 +1,11 @@
-import axios from 'axios'
+import axios, { AxiosResponse } from 'axios'
 import { Activity } from '../types'
 
 axios.defaults.baseURL = 'http://localhost:3000/api'
+
+const delay = (ms: number) => (response: AxiosResponse) => {
+    return new Promise<AxiosResponse>((resolve) => setTimeout(() => resolve(response), ms))
+}
 
 type Request = {
     get<T = any>(url: string): Promise<T>
@@ -10,10 +14,26 @@ type Request = {
     del<T = any>(url: string): Promise<T>
 }
 const request: Request = {
-    get: (url) => axios.get(url).then((response) => response.data),
-    post: (url, body) => axios.post(url, body).then((response) => response.data),
-    put: (url, body) => axios.put(url, body).then((response) => response.data),
-    del: (url) => axios.delete(url).then((response) => response.data)
+    get: (url) =>
+        axios
+            .get(url)
+            .then(delay(1000))
+            .then((response) => response.data),
+    post: (url, body) =>
+        axios
+            .post(url, body)
+            .then(delay(1000))
+            .then((response) => response.data),
+    put: (url, body) =>
+        axios
+            .put(url, body)
+            .then(delay(1000))
+            .then((response) => response.data),
+    del: (url) =>
+        axios
+            .delete(url)
+            .then(delay(1000))
+            .then((response) => response.data)
 }
 
 type Activities = {
