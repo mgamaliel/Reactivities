@@ -12,6 +12,8 @@ namespace reactivities.Api
 {
     public class Startup
     {
+        private const string ReactivitiesOrigin = "ReactivitiesPolicy";
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -25,6 +27,14 @@ namespace reactivities.Api
             services.AddDbContext<DataContext>(
                 options => options.UseSqlite(Configuration.GetConnectionString("DefaultConnection")));
             services.AddMediatR(typeof(List.Handler).Assembly);
+            services.AddCors(
+                options => options.AddPolicy(
+                    ReactivitiesOrigin,
+                    builder =>
+                        builder
+                            .AllowAnyHeader()
+                            .AllowAnyMethod()
+                            .WithOrigins("http://localhost:3030")));
             services.AddControllers();
         }
 
@@ -34,7 +44,7 @@ namespace reactivities.Api
             if (env.IsDevelopment()) app.UseDeveloperExceptionPage();
 
             //app.UseHttpsRedirection();
-
+            app.UseCors(ReactivitiesOrigin);
             app.UseRouting();
 
             app.UseAuthorization();
