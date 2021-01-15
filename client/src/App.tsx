@@ -8,6 +8,7 @@ import './App.css'
 import { Button, Container, Grid, Item, Label, Segment } from 'semantic-ui-react'
 import ActivityForm from './components/ActivityForm'
 import ActivityDetails from './components/ActivityDetails'
+import agent from './api/agent'
 
 const App: FC = (): JSX.Element => {
     const [activities, setActivities] = useState<Activity[]>([])
@@ -15,9 +16,7 @@ const App: FC = (): JSX.Element => {
     const [editMode, setEditMode] = useState<boolean>(false)
 
     useEffect(() => {
-        axios
-            .get<Activity[]>('/api/activities')
-            .then((response) => setActivities([...response.data]))
+        agent.activities.list().then((data) => setActivities(data))
     }, [])
 
     return (
@@ -57,7 +56,8 @@ const App: FC = (): JSX.Element => {
                                                 <Button
                                                     floated="right"
                                                     color="red"
-                                                    onClick={() => {
+                                                    onClick={async () => {
+                                                        await agent.activities.delete(activity.id)
                                                         setActivities([
                                                             ...activities.filter(
                                                                 (a) => a.id !== activity.id
@@ -87,13 +87,15 @@ const App: FC = (): JSX.Element => {
                                 key={selectedActivity?.id ?? 0}
                                 selected={selectedActivity}
                                 onCancel={() => setEditMode(false)}
-                                onSubmit={(activity) => {
+                                onSubmit={async (activity) => {
                                     if (selectedActivity) {
+                                        await agent.activities.update(activity)
                                         setActivities([
                                             ...activities.filter((a) => a.id !== activity.id),
                                             activity
                                         ])
                                     } else {
+                                        await agent.activities.create({ ...activity, id: uuid() })
                                         setActivities([...activities, { ...activity, id: uuid() }])
                                     }
 
